@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import type { LinksFunction } from "react-router";
 import {
   Form,
@@ -9,6 +10,7 @@ import {
   Scripts,
   ScrollRestoration,
   useNavigation,
+  useSubmit,
 } from "react-router";
 import type * as Route from "./+types.root";
 import "./app.css";
@@ -28,10 +30,13 @@ export const links: LinksFunction = () => [
   },
 ];
 
-export async function loader() {
-  const contacts = await getContacts();
+export async function loader({ request }: Route.LoaderArgs) {
+  const url = new URL(request.url);
+  const q = url.searchParams.get("q");
 
-  return { contacts };
+  const contacts = await getContacts(q);
+
+  return { q, contacts };
 }
 
 export async function action() {
@@ -63,25 +68,49 @@ export function ErrorBoundary() {
 }
 
 export default function App({ loaderData }: Route.ComponentProps) {
-  const { contacts } = loaderData;
+  const { q, contacts } = loaderData;
 
   const navigation = useNavigation();
   const isLoading = navigation.state === "loading";
+  const isSearching =
+    navigation.location &&
+    new URLSearchParams(navigation.location.search).has("q");
+  const showLoadingOverlay = isLoading && !isSearching;
+
+  const submit = useSubmit();
+
+  useEffect(() => {
+    const searchField = document.getElementById("q");
+    if (searchField instanceof HTMLInputElement) {
+      searchField.value = q || "";
+    }
+  }, [q]);
 
   return (
     <>
       <div id="sidebar">
         <h1>Remix Contacts</h1>
         <div>
-          <Form id="search-form" role="search">
+          <Form
+            id="search-form"
+            role="search"
+            onChange={(event) => {
+              const isFirstSearch = q === null;
+              submit(event.currentTarget, {
+                replace: !isFirstSearch,
+              });
+            }}
+          >
             <input
-              id="q"
-              aria-label="Search contacts"
-              placeholder="Search"
               type="search"
               name="q"
+              id="q"
+              defaultValue={q || ""}
+              className={isSearching ? "loading" : ""}
+              placeholder="Search"
+              aria-label="Search contacts"
             />
-            <div id="search-spinner" aria-hidden hidden={true} />
+            <div id="search-spinner" aria-hidden hidden={!isSearching} />
           </Form>
           <Form method="post">
             <button type="submit">New</button>
@@ -117,7 +146,7 @@ export default function App({ loaderData }: Route.ComponentProps) {
           )}
         </nav>
       </div>
-      <div id="detail" className={isLoading ? "loading" : ""}>
+      <div id="detail" className={showLoadingOverlay ? "loading" : ""}>
         <Outlet />
       </div>
     </>
