@@ -8,6 +8,7 @@ import {
   redirect,
   Scripts,
   ScrollRestoration,
+  useNavigation,
 } from "react-router";
 import type * as Route from "./+types.root";
 import "./app.css";
@@ -64,6 +65,9 @@ export function ErrorBoundary() {
 export default function App({ loaderData }: Route.ComponentProps) {
   const { contacts } = loaderData;
 
+  const navigation = useNavigation();
+  const isLoading = navigation.state === "loading";
+
   return (
     <>
       <div id="sidebar">
@@ -113,7 +117,7 @@ export default function App({ loaderData }: Route.ComponentProps) {
           )}
         </nav>
       </div>
-      <div id="detail">
+      <div id="detail" className={isLoading ? "loading" : ""}>
         <Outlet />
       </div>
     </>
