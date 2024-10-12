@@ -1,9 +1,10 @@
 export default function Component() {
   return (
-    <p id="index-page">
-      This is a demo for Remix.
+    <p id="zero-state">
+      This is a demo for React Router.
       <br />
-      Check out <a href="https://remix.run">the docs at remix.run</a>.
+      Check out{" "}
+      <a href="https://reactrouter.com">the docs at reactrouter.com</a>.
     </p>
   );
 }
