@@ -1,6 +1,7 @@
 import type { LinksFunction } from "react-router";
 import { Form, Links, Meta, Scripts, ScrollRestoration } from "react-router";
 import "./app.css";
+import ErrorPage from "./error-page";
 
 export const links: LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -31,6 +32,10 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </body>
     </html>
   );
+}
+
+export function ErrorBoundary() {
+  return <ErrorPage />;
 }
 
 export default function App() {
