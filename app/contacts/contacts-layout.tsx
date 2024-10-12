@@ -35,12 +35,8 @@ export default function Component({ loaderData }: Route.ComponentProps) {
 
   const navigation = useNavigation();
   const isLoading = navigation.state === "loading";
-  const isSearching =
-    navigation.location &&
-    new URLSearchParams(navigation.location.search).has("q");
+  const isSearching = new URLSearchParams(navigation.location?.search).has("q");
   const showLoadingOverlay = isLoading && !isSearching;
-
-  const submit = useSubmit();
 
   useEffect(() => {
     const searchField = document.getElementById("q");
@@ -54,27 +50,7 @@ export default function Component({ loaderData }: Route.ComponentProps) {
       <div id="sidebar">
         <h1>Remix Contacts</h1>
         <div>
-          <Form
-            role="search"
-            id="search-form"
-            onChange={(event) => {
-              const isFirstSearch = q === null;
-              submit(event.currentTarget, {
-                replace: !isFirstSearch,
-              });
-            }}
-          >
-            <input
-              type="search"
-              name="q"
-              id="q"
-              defaultValue={q || ""}
-              className={isSearching ? "loading" : ""}
-              placeholder="Search"
-              aria-label="Search contacts"
-            />
-            <div id="search-spinner" aria-hidden hidden={!isSearching} />
-          </Form>
+          <SearchBar query={q ?? ""} />
           <Form method="post">
             <button type="submit">New</button>
           </Form>
@@ -113,5 +89,43 @@ export default function Component({ loaderData }: Route.ComponentProps) {
         <Outlet />
       </div>
     </>
+  );
+}
+
+function SearchBar({ query }: { query?: string }) {
+  const submit = useSubmit();
+
+  const navigation = useNavigation();
+  const isSearching = new URLSearchParams(navigation.location?.search).has("q");
+
+  useEffect(() => {
+    const searchField = document.getElementById("q");
+    if (searchField instanceof HTMLInputElement) {
+      searchField.value = query || "";
+    }
+  }, [query]);
+
+  return (
+    <Form
+      role="search"
+      id="search-form"
+      onChange={(event) => {
+        const isFirstSearch = query === undefined;
+        submit(event.currentTarget, {
+          replace: !isFirstSearch,
+        });
+      }}
+    >
+      <input
+        type="search"
+        name="q"
+        id="q"
+        defaultValue={query ?? ""}
+        className={isSearching ? "loading" : ""}
+        placeholder="Search"
+        aria-label="Search contacts"
+      />
+      <div id="search-spinner" aria-hidden hidden={!isSearching} />
+    </Form>
   );
 }
