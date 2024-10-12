@@ -1,13 +1,14 @@
-import { useEffect } from "react";
+import { useEffect, type ReactNode } from "react";
 import {
   Form,
   NavLink,
   Outlet,
   redirect,
+  useFetcher,
   useNavigation,
   useSubmit,
 } from "react-router";
-import { createEmptyContact, getContacts } from "~/data";
+import { createEmptyContact, getContacts, type ContactRecord } from "~/data";
 import ErrorPage from "~/error-page";
 import type * as Route from "./+types.contacts-layout";
 
@@ -73,7 +74,9 @@ export default function Component({ loaderData }: Route.ComponentProps) {
                     ) : (
                       <i>No Name</i>
                     )}{" "}
-                    {contact.favorite ? <span>★</span> : null}
+                    <Favorite contact={contact}>
+                      <span>★</span>
+                    </Favorite>
                   </NavLink>
                 </li>
               ))}
@@ -128,4 +131,23 @@ function SearchBar({ query }: { query?: string }) {
       <div id="search-spinner" aria-hidden hidden={!isSearching} />
     </Form>
   );
+}
+
+function Favorite({
+  contact,
+  children,
+}: {
+  contact: Pick<ContactRecord, "id" | "favorite">;
+  children?: ReactNode;
+}) {
+  const fetcher = useFetcher({ key: `contact:${contact.id}` });
+  const favorite = fetcher.formData
+    ? fetcher.formData.get("favorite") === "true"
+    : contact.favorite;
+
+  if (!favorite) {
+    return null;
+  }
+
+  return children;
 }

@@ -78,8 +78,12 @@ export default function Component({ loaderData }: Route.ComponentProps) {
   );
 }
 
-function Favorite({ contact }: { contact: Pick<ContactRecord, "favorite"> }) {
-  const fetcher = useFetcher();
+function Favorite({
+  contact,
+}: {
+  contact: Pick<ContactRecord, "id" | "favorite">;
+}) {
+  const fetcher = useFetcher({ key: `contact:${contact.id}` });
   const favorite = fetcher.formData
     ? fetcher.formData.get("favorite") === "true"
     : contact.favorite;
