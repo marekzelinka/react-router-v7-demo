@@ -1,9 +1,9 @@
 import type { LinksFunction } from "react-router";
 import {
   Form,
-  Link,
   Links,
   Meta,
+  NavLink,
   Outlet,
   redirect,
   Scripts,
@@ -88,7 +88,12 @@ export default function App({ loaderData }: Route.ComponentProps) {
             <ul>
               {contacts.map((contact) => (
                 <li key={contact.id}>
-                  <Link to={`contacts/${contact.id}`}>
+                  <NavLink
+                    to={`contacts/${contact.id}`}
+                    className={({ isActive, isPending }) =>
+                      isActive ? "active" : isPending ? "pending" : ""
+                    }
+                  >
                     {contact.first || contact.last ? (
                       <>
                         {contact.first} {contact.last}
@@ -97,7 +102,7 @@ export default function App({ loaderData }: Route.ComponentProps) {
                       <i>No Name</i>
                     )}{" "}
                     {contact.favorite ? <span>★</span> : null}
-                  </Link>
+                  </NavLink>
                 </li>
               ))}
             </ul>
