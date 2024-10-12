@@ -10,7 +10,7 @@ import {
 } from "react-router";
 import type * as Route from "./+types.root";
 import "./app.css";
-import { getContacts } from "./data";
+import { createEmptyContact, getContacts } from "./data";
 import ErrorPage from "./error-page";
 
 export const links: LinksFunction = () => [
@@ -30,6 +30,12 @@ export async function loader() {
   const contacts = await getContacts();
 
   return { contacts };
+}
+
+export async function action() {
+  const contact = await createEmptyContact();
+
+  return { contact };
 }
 
 export function Layout({ children }: { children: React.ReactNode }) {
