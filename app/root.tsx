@@ -5,6 +5,7 @@ import {
   Links,
   Meta,
   Outlet,
+  redirect,
   Scripts,
   ScrollRestoration,
 } from "react-router";
@@ -35,7 +36,7 @@ export async function loader() {
 export async function action() {
   const contact = await createEmptyContact();
 
-  return { contact };
+  return redirect(`/contacts/${contact.id}/edit`);
 }
 
 export function Layout({ children }: { children: React.ReactNode }) {
