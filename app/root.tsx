@@ -8,7 +8,9 @@ import {
   Scripts,
   ScrollRestoration,
 } from "react-router";
+import type * as Route from "./+types.root";
 import "./app.css";
+import { getContacts } from "./data";
 import ErrorPage from "./error-page";
 
 export const links: LinksFunction = () => [
@@ -23,6 +25,12 @@ export const links: LinksFunction = () => [
     href: "https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap",
   },
 ];
+
+export async function loader() {
+  const contacts = await getContacts();
+
+  return { contacts };
+}
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -46,7 +54,9 @@ export function ErrorBoundary() {
   return <ErrorPage />;
 }
 
-export default function App() {
+export default function App({ loaderData }: Route.ComponentProps) {
+  const { contacts } = loaderData;
+
   return (
     <>
       <div id="sidebar">
@@ -67,14 +77,28 @@ export default function App() {
           </Form>
         </div>
         <nav>
-          <ul>
-            <li>
-              <Link to={`/contacts/1`}>Your Name</Link>
-            </li>
-            <li>
-              <Link to={`/contacts/2`}>Your Friend</Link>
-            </li>
-          </ul>
+          {contacts.length ? (
+            <ul>
+              {contacts.map((contact) => (
+                <li key={contact.id}>
+                  <Link to={`contacts/${contact.id}`}>
+                    {contact.first || contact.last ? (
+                      <>
+                        {contact.first} {contact.last}
+                      </>
+                    ) : (
+                      <i>No Name</i>
+                    )}{" "}
+                    {contact.favorite ? <span>★</span> : null}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p>
+              <i>No contacts</i>
+            </p>
+          )}
         </nav>
       </div>
       <div id="detail">
