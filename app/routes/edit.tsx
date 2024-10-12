@@ -1,4 +1,4 @@
-import { data, Form, redirect } from "react-router";
+import { data, Form, redirect, useNavigate } from "react-router";
 import { getContact, updateContact } from "../data";
 import type * as Route from "./+types.edit";
 
@@ -22,6 +22,9 @@ export async function action({ request, params }: Route.ActionArgs) {
 
 export default function Component({ loaderData }: Route.ComponentProps) {
   const { contact } = loaderData;
+
+  const navigate = useNavigate();
+  const goBack = () => navigate(-1);
 
   return (
     <Form key={contact.id} id="contact-form" method="post">
@@ -67,7 +70,9 @@ export default function Component({ loaderData }: Route.ComponentProps) {
       </label>
       <p>
         <button type="submit">Save</button>
-        <button type="button">Cancel</button>
+        <button type="button" onClick={goBack}>
+          Cancel
+        </button>
       </p>
     </Form>
   );
