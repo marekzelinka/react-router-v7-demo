@@ -55,8 +55,8 @@ export default function Component({ loaderData }: Route.ComponentProps) {
         <h1>Remix Contacts</h1>
         <div>
           <Form
-            id="search-form"
             role="search"
+            id="search-form"
             onChange={(event) => {
               const isFirstSearch = q === null;
               submit(event.currentTarget, {
@@ -87,7 +87,7 @@ export default function Component({ loaderData }: Route.ComponentProps) {
                   <NavLink
                     to={`contacts/${contact.id}`}
                     className={({ isActive, isPending }) =>
-                      isActive ? "active" : isPending ? "pending" : ""
+                      isActive ? "active" : isPending ? "pending" : undefined
                     }
                   >
                     {contact.first || contact.last ? (
@@ -109,7 +109,7 @@ export default function Component({ loaderData }: Route.ComponentProps) {
           )}
         </nav>
       </div>
-      <div id="detail" className={showLoadingOverlay ? "loading" : ""}>
+      <div id="detail" className={showLoadingOverlay ? "loading" : undefined}>
         <Outlet />
       </div>
     </>
