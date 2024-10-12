@@ -1,5 +1,12 @@
 import type { LinksFunction } from "react-router";
-import { Form, Links, Meta, Scripts, ScrollRestoration } from "react-router";
+import {
+  Form,
+  Links,
+  Meta,
+  Outlet,
+  Scripts,
+  ScrollRestoration,
+} from "react-router";
 import "./app.css";
 import ErrorPage from "./error-page";
 
@@ -69,7 +76,9 @@ export default function App() {
           </ul>
         </nav>
       </div>
-      <div id="detail">{/* <Outlet /> */}</div>
+      <div id="detail">
+        <Outlet />
+      </div>
     </>
   );
 }
