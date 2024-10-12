@@ -3,10 +3,8 @@ import { isRouteErrorResponse, useRouteError } from "react-router";
 export default function ErrorPage() {
   const error = useRouteError();
   const errroMessage = isRouteErrorResponse(error)
-    ? error.statusText
-    : error instanceof Error
-      ? error.message
-      : "Unknown Error";
+    ? error.data
+    : getErrorMessage(error);
 
   return (
     <div id="error-page">
@@ -17,4 +15,23 @@ export default function ErrorPage() {
       </p>
     </div>
   );
+}
+
+export function getErrorMessage(error: unknown) {
+  if (typeof error === "string") {
+    return error;
+  }
+
+  if (
+    error &&
+    typeof error === "object" &&
+    "message" in error &&
+    typeof error.message === "string"
+  ) {
+    return error.message;
+  }
+
+  console.error("Unable to get error message for error", error);
+
+  return "Unknown Error";
 }
